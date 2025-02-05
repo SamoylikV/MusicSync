@@ -1,0 +1,34 @@
+Index: add_to_spotify.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import spotipy\r\nfrom spotipy.oauth2 import SpotifyOAuth\r\n\r\nsp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=\"7f5d23788a904bd081de22874b4314fb\",\r\n                                               client_secret=\"370791af6cd149e2a2022d85adedff2c\",\r\n                                               redirect_uri=\"http://localhost:3000/callback\",\r\n                                               scope=\"user-library-read\"))\r\n\r\n\r\nbeatles_uri = \"spotify:artist:3WrFJ7ztbogyGnTHbHJFl2\"\r\n\r\nresults = sp.artist_albums(beatles_uri, album_type='album')\r\nalbums = results['items']\r\nwhile results['next']:\r\n    results = sp.next(results)\r\n    albums.extend(results['items'])\r\n\r\nfor album in albums:\r\n    print(album['name'])\r\n\r\n\r\nresults = sp.current_user_saved_tracks()\r\nfor idx, item in enumerate(results['items']):\r\n    track = item['track']\r\n    print(idx, track['artists'][0]['name'], \" – \", track['name'])
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/add_to_spotify.py b/add_to_spotify.py
+--- a/add_to_spotify.py	(revision 392aa863bf2673064f4f9ecad1276de8440e0cb2)
++++ b/add_to_spotify.py	(date 1738687506267)
+@@ -3,10 +3,22 @@
+ 
+ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id="7f5d23788a904bd081de22874b4314fb",
+                                                client_secret="370791af6cd149e2a2022d85adedff2c",
+-                                               redirect_uri="http://localhost:3000/callback",
++                       t                        redirect_uri="http://localhost:3000/callback",
+                                                scope="user-library-read"))
+ 
+ 
++def fetch_and_refresh(client_id, client_secret, redirect_uri, scope):
++    auth_manager = SpotifyOAuth(
++        client_id=client_id,
++        client_secret=client_secret,
++        redirect_uri=redirect_uri,
++        scope=scope
++    )
++    token_info = auth_manager.get_access_token(as_dict=True)
++    return token_info
++
++
++
+ beatles_uri = "spotify:artist:3WrFJ7ztbogyGnTHbHJFl2"
+ 
+ results = sp.artist_albums(beatles_uri, album_type='album')
